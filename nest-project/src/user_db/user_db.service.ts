@@ -18,4 +18,51 @@ export class UserDbServices {
         const savedData = await createdData.save();
         return savedData;
     }
+    async getAllUsers(pageNumber: number | null, pageSize: number | null, searchText: string | null) {
+        let searchObject
+        /**
+         * creating regex for serching text on field 
+         * firstName,lastName,email
+         */
+        if (searchText) {
+          searchObject =   {
+                $match: {
+                    $or: [
+                        {
+                            firstName: { $regex: searchText, $options: 'i' }
+                        },
+                        {
+                            lastName: { $regex: searchText, $options: 'i' }
+                        },
+                        {
+                            emailName: { $regex: searchText, $options: 'i' }
+                        }
+                    ]
+                }
+            }
+        }else{
+            searchObject = {$match:{}}
+        }
+        /**
+         * overriting pageNumber and pageSize if its null
+         */
+        pageNumber = pageNumber ? pageNumber : 1
+        pageSize = pageSize ? pageSize : 100
+        const offcet = (pageNumber - 1) * pageSize
+        let result = await this.userDbModel.aggregate([
+            searchObject,
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
+                $facet: {
+                    metadata: [{ $count: "totalCount" }, { $addFields: { page: pageNumber } }],
+                    data: [{ $skip: offcet }, { $limit: pageSize }]
+                }
+            }
+        ]).allowDiskUse(true);
+        return result
+    }
 }
