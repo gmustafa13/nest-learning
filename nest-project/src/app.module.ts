@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserDbModule } from './user_db/usere_db.module';
+import { MessageModule } from './message/message.module';
 /**
  * for connecting to mongodb 
  * we are using MongoooseModule.forRoot()
@@ -15,7 +16,7 @@ import { UserDbModule } from './user_db/usere_db.module';
  */
 
 @Module({
-  imports: [UserModule , MongooseModule.forRoot('mongodb://localhost/nest-learning'),UserDbModule],
+  imports: [UserModule , MessageModule,MongooseModule.forRoot('mongodb://localhost/nest-learning'),UserDbModule],
   controllers: [AppController],
   providers: [AppService],
 })
