@@ -25,7 +25,7 @@ export class UserDbServices {
          * firstName,lastName,email
          */
         if (searchText) {
-          searchObject =   {
+            searchObject = {
                 $match: {
                     $or: [
                         {
@@ -40,8 +40,8 @@ export class UserDbServices {
                     ]
                 }
             }
-        }else{
-            searchObject = {$match:{}}
+        } else {
+            searchObject = { $match: {} }
         }
         /**
          * overriting pageNumber and pageSize if its null
@@ -64,5 +64,11 @@ export class UserDbServices {
             }
         ]).allowDiskUse(true);
         return result
+    }
+    async updateOne(email, user: userDbInterFace) {
+        return await this.userDbModel.updateOne({ email }, { $set: user })    
+    }
+    async deleteOne(email:string){
+        return await this.userDbModel.deleteOne({email})
     }
 }

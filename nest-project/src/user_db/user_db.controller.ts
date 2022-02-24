@@ -1,5 +1,6 @@
-import { Controller, Body, Post, Get ,Param,Query} from "@nestjs/common";
+import { Controller, Body, Post, Get, Param, Query, Put, Delete } from "@nestjs/common";
 import { UserDbServices } from "./user_db.service";
+import { userDbInterFace } from "./user_db.model";
 @Controller('userdb')
 export class UserDbController {
     /**
@@ -7,6 +8,7 @@ export class UserDbController {
      * using service as a dependancy injector
      * so that i can acess UserDbService
      */
+
     constructor(private readonly userDbServices: UserDbServices) { }
     @Post('create-user')
 
@@ -29,11 +31,21 @@ export class UserDbController {
     }
 
     @Get()
-    async getAllUser(@Query('pageNumber') pageNo:string,@Query('pageSize') pageSize:string, @Query('searchText') serchText:string){
-        let pageNumber = parseInt(pageNo,10);
-        let pageSizeN = parseInt(pageSize,10)
-        let data = await this.userDbServices.getAllUsers(pageNumber,pageSizeN,serchText);
+    async getAllUser(@Query('pageNumber') pageNo: string, @Query('pageSize') pageSize: string, @Query('searchText') serchText: string) {
+        let pageNumber = parseInt(pageNo, 10);
+        let pageSizeN = parseInt(pageSize, 10)
+        let data = await this.userDbServices.getAllUsers(pageNumber, pageSizeN, serchText);
         return data
-        
+
+    }
+
+    @Put()
+    async updateOne(@Body() user: userDbInterFace, @Query('email') email: string) {
+        return await this.userDbServices.updateOne(email, user)
+    }
+
+    @Delete()
+    async deleteOne(@Query('email') email:string){
+        return await this.userDbServices.deleteOne(email)
     }
 }
